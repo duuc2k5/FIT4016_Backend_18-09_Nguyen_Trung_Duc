@@ -1,0 +1,75 @@
+@model OrderManagementApp.Models.Entities.Order
+
+@{
+    ViewData["Title"] = "Edit Order";
+    var products = ViewData["Products"] as List<OrderManagementApp.Models.Entities.Product> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Edit Order</h1>
+
+    <div class="alert alert-info" role="alert">
+        <strong>Note:</strong> You can only edit Customer Name, Email, Quantity, and Delivery Date. Order Number and Product cannot be changed.
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <input type="hidden" asp-for="OrderId">
+
+                <div class="mb-3">
+                    <label asp-for="OrderNumber" class="form-label">Order Number (Read-only)</label>
+                    <input asp-for="OrderNumber" class="form-control" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ProductId" class="form-label">Product (Read-only)</label>
+                    <input type="text" class="form-control" value="@Model.Product?.ProductName" readonly>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="OrderDate" class="form-label">Order Date (Read-only)</label>
+                    <input asp-for="OrderDate" type="datetime-local" class="form-control" readonly>
+                </div>
+
+                <hr>
+
+                <div class="mb-3">
+                    <label asp-for="CustomerName" class="form-label">Customer Name *</label>
+                    <input asp-for="CustomerName" class="form-control" placeholder="Enter customer name (2-100 characters)">
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CustomerEmail" class="form-label">Customer Email *</label>
+                    <input asp-for="CustomerEmail" type="email" class="form-control" placeholder="example@email.com">
+                    <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Quantity" class="form-label">Quantity *</label>
+                    <input asp-for="Quantity" type="number" class="form-control" placeholder="Enter quantity" min="1">
+                    <small class="text-muted d-block mt-1">Available stock: @Model.Product?.StockQuantity</small>
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DeliveryDate" class="form-label">Delivery Date (Optional)</label>
+                    <input asp-for="DeliveryDate" type="datetime-local" class="form-control">
+                    <small class="text-muted d-block mt-1">Must be greater than or equal to Order Date (@Model.OrderDate.ToString("yyyy-MM-dd"))</small>
+                    <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <button type="submit" class="btn btn-primary">Update Order</button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
